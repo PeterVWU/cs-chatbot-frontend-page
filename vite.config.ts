@@ -10,9 +10,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // server: {
-  //   proxy: {
-  //     '/send-message': 'http://localhost:8787',
-  //   }
-  // }
+  server: {
+    proxy: {
+      '/send-message': 'http://localhost:8787',
+    }
+  }
 })

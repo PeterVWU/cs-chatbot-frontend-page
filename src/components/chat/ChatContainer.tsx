@@ -1,5 +1,26 @@
 import { useEffect, useRef } from 'react';
-import { Message } from "../../types/conversation";
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
+import { Message, Link } from "../../types/conversation";
+
+const MessageLinks = ({ links }: { links: Link[] }) => {
+    return (
+        <div className="flex flex-wrap gap-2 mt-2">
+            {links.map((link, index) => (
+                <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(link.url, '_blank')}
+                    className="flex items-center gap-1"
+                >
+                    {link.label}
+                    <ExternalLink className="h-3 w-3" />
+                </Button>
+            ))}
+        </div>
+    );
+};
 
 const ChatContainer = ({ messages }: { messages: Message[] }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -26,8 +47,11 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
                             ? 'bg-black text-white'
                             : 'bg-gray-100 text-gray-900'
                             }`}
-                        dangerouslySetInnerHTML={{ __html: message.text }}
                     >
+                        <div>{message.structuredContent.text}</div>
+                        {message.structuredContent.links && (
+                            <MessageLinks links={message.structuredContent.links} />
+                        )}
                     </div>
                 </div>
             ))}

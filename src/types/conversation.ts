@@ -1,9 +1,21 @@
 export interface Message {
-    text: string;
+    structuredContent: StructuredResponse;
     sender: 'user' | 'bot';
     timestamp: number;
 }
+
+export interface StructuredResponse {
+    text: string;
+    links?: Link[];
+}
+
+export interface Link {
+    label: string;
+    url: string;
+    type: 'tracking' | 'faq' | 'other';
+}
+
 export interface ChatResponse {
-    response: string;
+    response: StructuredResponse;
     conversationId: string;
 }

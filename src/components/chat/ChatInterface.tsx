@@ -11,7 +11,7 @@ import ChatContainer from "./ChatContainer";
 
 const ChatInterface = () => {
     const [messages, setMessages] = useState<Message[]>([{
-        text: "👋 Hi there! I'm your customer service assistant. How can I help you today?",
+        structuredContent: { text: "👋 Hi there! I'm your customer service assistant. How can I help you today?" },
         sender: 'bot',
         timestamp: Date.now(),
     }]);
@@ -42,7 +42,7 @@ const ChatInterface = () => {
         onSuccess: (data) => {
             setConversationId(data.conversationId);
             setMessages(prev => [...prev, {
-                text: data.response,
+                structuredContent: data.response,
                 sender: 'bot',
                 timestamp: Date.now(),
             }]);
@@ -55,7 +55,7 @@ const ChatInterface = () => {
         if (!newMessage.trim()) return;
 
         setMessages(prev => [...prev, {
-            text: newMessage,
+            structuredContent: { text: newMessage },
             sender: 'user',
             timestamp: Date.now(),
         }]);
