@@ -1,0 +1,19 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cs-chatbot-frontend-page",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-01-21",
+  "observability": {
+    "enabled": true
+  },
+  "services": [
+    {
+      "binding": "CS_BACKEND_WORKER",
+      "service": "cs-chatbot-backend-worker"
+    }
+  ]
+}
