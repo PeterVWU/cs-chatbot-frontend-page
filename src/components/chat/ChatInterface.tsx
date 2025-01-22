@@ -4,14 +4,17 @@ import { useMutation } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send } from 'lucide-react';
 import { Message, ChatResponse } from "../../types/conversation";
 import ChatContainer from "./ChatContainer";
 
 
 const ChatInterface = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<Message[]>([{
+        text: "👋 Hi there! I'm your customer service assistant. How can I help you today?",
+        sender: 'bot',
+        timestamp: Date.now(),
+    }]);
     const [newMessage, setNewMessage] = useState('');
     const [conversationId, setConversationId] = useState<string | undefined>();
 
@@ -63,34 +66,14 @@ const ChatInterface = () => {
     return (
         <Card className="w-full max-w-md mx-auto h-[600px] flex flex-col">
             <div className="p-4 border-b flex items-center gap-3">
-                {/* <Avatar className="h-8 w-8">
-                    <AvatarImage src="/support-avatar.png" />
-                    <AvatarFallback>CS</AvatarFallback>
-                </Avatar>
-                <div>
-                    <div className="font-semibold">Sofia Davis</div>
-                    <div className="text-sm text-gray-500">m@example.com</div>
-                </div> */}
+                <h2 className="text-lg font-semibold text-center">Customer Support</h2>
+
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
                 <ChatContainer messages={messages} />
-                {/* {messages.map((message, index) => (
-                    <div
-                        key={index}
-                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div
-                            className={`rounded-lg px-4 py-2 max-w-[80%] ${message.sender === 'user'
-                                ? 'bg-black text-white'
-                                : 'bg-gray-100 text-gray-900'
-                                }`}
-                        >
-                            {message.text}
-                        </div>
-                    </div>
-                ))} */}
+
                 {mutation.isPending && (
                     <div className="flex justify-start">
                         <div className="bg-gray-100 rounded-lg px-4 py-2">
