@@ -41,11 +41,31 @@ const ChatInterface = () => {
         mutationFn: sendMessage,
         onSuccess: (data) => {
             setConversationId(data.conversationId);
-            setMessages(prev => [...prev, {
+
+            const botMessage: Message = {
                 structuredContent: data.response,
                 sender: 'bot',
                 timestamp: Date.now(),
-            }]);
+                intent: data.intent
+            }
+            setMessages(prev => [...prev, botMessage]);
+
+            // for order or FAQ response add feedback message
+            if (data.intent === 'get_order_data' || data.intent === 'general_inquiry') {
+                const feedbackMessage: Message = {
+
+                    structuredContent: {
+                        text: "Was this response helpful?", actions: [{
+                            type: 'feedback',
+                            options: [{ label: 'Yes', value: 'helpful' }, { label: 'No', value: 'not_helpgful' }]
+                        }],
+                    },
+
+                    sender: 'bot',
+                    timestamp: Date.now() + 100,
+                }
+                setMessages(prev => [...prev, feedbackMessage]);
+            }
             setNewMessage('');
         },
     });
@@ -63,6 +83,20 @@ const ChatInterface = () => {
         mutation.mutate();
     };
 
+    const handleFeedbackClick = (value: string) => {
+        console.log('Feedback clicked:', value);
+        const message: string = value === 'helpful'
+            ? "Yes, the answer was helpful"
+            : "No, I need more help";
+        setMessages(prev => [...prev, {
+            structuredContent: { text: message },
+            sender: 'user',
+            timestamp: Date.now()
+        }])
+        setNewMessage(message)
+        mutation.mutate();
+    }
+
     return (
         <Card className="w-full max-w-md mx-auto h-[600px] flex flex-col">
             <div className="p-4 border-b flex items-center gap-3">
@@ -72,7 +106,8 @@ const ChatInterface = () => {
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
-                <ChatContainer messages={messages} />
+                <ChatContainer messages={messages}
+                    onFeedbackClick={handleFeedbackClick} />
 
                 {mutation.isPending && (
                     <div className="flex justify-start">

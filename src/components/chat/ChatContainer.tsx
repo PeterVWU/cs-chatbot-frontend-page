@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
-import { Message, Link } from "../../types/conversation";
+import { Message, Link, Action } from "../../types/conversation";
+
 
 const MessageLinks = ({ links }: { links: Link[] }) => {
     return (
@@ -22,7 +23,36 @@ const MessageLinks = ({ links }: { links: Link[] }) => {
     );
 };
 
-const ChatContainer = ({ messages }: { messages: Message[] }) => {
+const MessageActions = ({
+    actions,
+    onFeedbackClick
+}: { actions: Action[]; onFeedbackClick: (value: string) => void }) => {
+    return (
+        <div className="flex flex-wrap gap-2 mt-2">
+            {actions.map((action, index) => (
+                <div key={index} className="flex gap-2">
+                    {action.options.map((option, optIndex) => (
+                        <Button
+                            key={optIndex}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onFeedbackClick(option.value)}
+                        >
+                            {option.label}
+                        </Button>
+                    ))}
+                </div>
+            ))
+            }
+        </div >
+    )
+}
+
+interface ChatContainerProps {
+    messages: Message[];
+    onFeedbackClick: (value: string) => void;
+}
+const ChatContainer = ({ messages, onFeedbackClick }: ChatContainerProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -51,6 +81,12 @@ const ChatContainer = ({ messages }: { messages: Message[] }) => {
                         <div>{message.structuredContent.text}</div>
                         {message.structuredContent.links && (
                             <MessageLinks links={message.structuredContent.links} />
+                        )}
+                        {message.structuredContent.actions && (
+                            <MessageActions
+                                actions={message.structuredContent.actions}
+                                onFeedbackClick={onFeedbackClick}
+                            />
                         )}
                     </div>
                 </div>
