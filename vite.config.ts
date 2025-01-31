@@ -12,7 +12,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/send-message': 'http://localhost:8787',
+      '/send-message': 'http://localhost:8788',
     }
   }
 })

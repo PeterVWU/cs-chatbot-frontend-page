@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
-import { Message, ChatResponse } from "../../types/conversation";
+import { Message, ChatResponse, StructuredResponse } from "../../types/conversation";
 import ChatContainer from "./ChatContainer";
 
 
@@ -50,25 +50,40 @@ const ChatInterface = () => {
             }
             setMessages(prev => [...prev, botMessage]);
 
-            // for order or FAQ response add feedback message
-            if (data.intent === 'get_order_data' || data.intent === 'general_inquiry') {
-                const feedbackMessage: Message = {
-
-                    structuredContent: {
-                        text: "Was this response helpful?", actions: [{
-                            type: 'feedback',
-                            options: [{ label: 'Yes', value: 'helpful' }, { label: 'No', value: 'not_helpgful' }]
-                        }],
-                    },
-
-                    sender: 'bot',
-                    timestamp: Date.now() + 100,
-                }
-                setMessages(prev => [...prev, feedbackMessage]);
+            // create action message, such as feedback, create ticket
+            if (data.response.action?.type) {
+                const actionMessage: Message = generateActionMessage(data.response.action.type)
+                setMessages(prev => [...prev, actionMessage]);
             }
             setNewMessage('');
         },
     });
+
+    const generateActionMessage = (type: 'feedback' | 'ticket'): Message => {
+        let structuredContent: StructuredResponse
+        if (type === "feedback") {
+            structuredContent = {
+                text: "Was this response helpful?",
+                action: {
+                    type: 'feedback',
+                    options: [{ label: 'Yes', value: 'helpful' }, { label: 'No', value: 'not_helpgful' }]
+                },
+            }
+        } else {
+            structuredContent = {
+                text: "Would you like to create a ticket",
+                action: {
+                    type: 'ticket',
+                    options: [{ label: 'Yes', value: 'create' }]
+                },
+            }
+        }
+        return {
+            structuredContent,
+            sender: 'bot',
+            timestamp: Date.now() + 100,
+        }
+    }
 
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,16 +98,23 @@ const ChatInterface = () => {
         mutation.mutate();
     };
 
-    const handleFeedbackClick = (value: string) => {
-        console.log('Feedback clicked:', value);
-        const message: string = value === 'helpful'
-            ? "Yes, the answer was helpful"
-            : "No, I need more help";
-        setMessages(prev => [...prev, {
-            structuredContent: { text: message },
-            sender: 'user',
-            timestamp: Date.now()
-        }])
+    const handleActionClick = (type: string, value: string) => {
+        console.log('Action clicked:', type, value);
+        let message: string;
+        if (type === 'feedback') {
+            message = value === 'helpful'
+                ? "FEEDBACK_HELPFUL"
+                : "FEEDBACK_UNHELPFUL";
+        } else {
+            message = value === 'create'
+                ? "TICKET_CREATE"
+                : "";
+        }
+        // setMessages(prev => [...prev, {
+        //     structuredContent: { text: message },
+        //     sender: 'user',
+        //     timestamp: Date.now()
+        // }])
         setNewMessage(message)
         mutation.mutate();
     }
@@ -107,7 +129,7 @@ const ChatInterface = () => {
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
                 <ChatContainer messages={messages}
-                    onFeedbackClick={handleFeedbackClick} />
+                    onActionClick={handleActionClick} />
 
                 {mutation.isPending && (
                     <div className="flex justify-start">

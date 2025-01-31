@@ -22,37 +22,34 @@ const MessageLinks = ({ links }: { links: Link[] }) => {
         </div>
     );
 };
-
-const MessageActions = ({
-    actions,
-    onFeedbackClick
-}: { actions: Action[]; onFeedbackClick: (value: string) => void }) => {
+``
+const MessageAction = ({
+    action,
+    onActionClick
+}: { action: Action; onActionClick: (type: string, value: string) => void }) => {
     return (
         <div className="flex flex-wrap gap-2 mt-2">
-            {actions.map((action, index) => (
-                <div key={index} className="flex gap-2">
-                    {action.options.map((option, optIndex) => (
-                        <Button
-                            key={optIndex}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onFeedbackClick(option.value)}
-                        >
-                            {option.label}
-                        </Button>
-                    ))}
-                </div>
-            ))
-            }
+            <div className="flex gap-2">
+                {action.options.map((option, optIndex) => (
+                    <Button
+                        key={optIndex}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onActionClick(action.type, option.value)}
+                    >
+                        {option.label}
+                    </Button>
+                ))}
+            </div>
         </div >
     )
 }
 
 interface ChatContainerProps {
     messages: Message[];
-    onFeedbackClick: (value: string) => void;
+    onActionClick: (type: string, value: string) => void;
 }
-const ChatContainer = ({ messages, onFeedbackClick }: ChatContainerProps) => {
+const ChatContainer = ({ messages, onActionClick }: ChatContainerProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -82,10 +79,10 @@ const ChatContainer = ({ messages, onFeedbackClick }: ChatContainerProps) => {
                         {message.structuredContent.links && (
                             <MessageLinks links={message.structuredContent.links} />
                         )}
-                        {message.structuredContent.actions && (
-                            <MessageActions
-                                actions={message.structuredContent.actions}
-                                onFeedbackClick={onFeedbackClick}
+                        {message.structuredContent.action?.options && (
+                            <MessageAction
+                                action={message.structuredContent.action}
+                                onActionClick={onActionClick}
                             />
                         )}
                     </div>

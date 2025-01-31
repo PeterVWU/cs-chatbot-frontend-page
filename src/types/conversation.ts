@@ -8,11 +8,11 @@ export interface Message {
 export interface StructuredResponse {
     text: string;
     links?: Link[];
-    actions?: Action[];
+    action?: Action;
 }
 
 export interface Action {
-    type: 'feedback' | 'other';
+    type: 'feedback' | 'ticket';
     options: ActionOption[];
 }
 
@@ -33,8 +33,11 @@ export interface ChatResponse {
     intent: Intent;
 }
 export type Intent =
-    | 'close'             // End conversation
-    | 'need_order_number'  // Need order number
-    | 'get_order_data'    // Contains/refers to order details
-    | 'ticketing'         // Create support ticket/escalate
-    | 'general_inquiry';  // Default/general questions
+    | 'order'             // order related
+    // | 'product'           // product related
+    // | 'payment'           // payment related
+    // | 'shipping'          // shipping related
+    // | 'return'            // return related
+    // | 'cancel'            // cancel related
+    | 'other'             // other related
+    | 'ticketing'
