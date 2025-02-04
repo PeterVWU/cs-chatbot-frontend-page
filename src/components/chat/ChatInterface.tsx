@@ -110,11 +110,6 @@ const ChatInterface = () => {
                 ? "TICKET_CREATE"
                 : "";
         }
-        // setMessages(prev => [...prev, {
-        //     structuredContent: { text: message },
-        //     sender: 'user',
-        //     timestamp: Date.now()
-        // }])
         setNewMessage(message)
         mutation.mutate();
     }
